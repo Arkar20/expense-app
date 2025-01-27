@@ -1,3 +1,7 @@
+import React from "react";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
     Dialog,
     DialogContent,
@@ -8,11 +12,59 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { DataListInput } from "../atoms";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { DataListInput, DatePicker } from "../atoms";
+import { useExpenseStorage } from "@/store";
+
+// Define Zod schema for validation
+const expenseSchema = z.object({
+    label: z.string().min(1, "Expense name is required"),
+    amount: z
+        .string()
+        .refine((value) => !isNaN(Number(value)) && Number(value) > 0, {
+            message: "Please enter a valid amount",
+        }),
+    category: z.string().min(1, "Category is required"),
+    createdAt: z
+        .string()
+        .refine((value) => !isNaN(Date.parse(value)), "Invalid date"),
+});
+
+// Infer form data type from Zod schema
+type FormData = z.infer<typeof expenseSchema>;
 
 export function AddExpenseDialogForm() {
+    const {
+        control,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm<FormData>({
+        resolver: zodResolver(expenseSchema), // Use Zod resolver for validation
+        defaultValues: {
+            label: "",
+            amount: "",
+            category: "",
+        },
+    });
+
+    const [isOpen, setIsOpen] = React.useState(false);
+
+    const { expenses, addExpense } = useExpenseStorage();
+
+    const onSubmit = (data: FormData) => {
+        addExpense({
+            ...data,
+            amount: Number(data.amount),
+            createdAt: new Date(data.createdAt),
+            id: expenses.length + 1,
+        });
+        reset();
+        setIsOpen(false);
+    };
+
     return (
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline" className="mb-4">
                     Add Expense
@@ -22,34 +74,127 @@ export function AddExpenseDialogForm() {
                 <DialogHeader>
                     <DialogTitle>Add New Expense</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4">
-                    <div>
-                        <Label htmlFor="expense-name">Expense Name</Label>
-                        <Input
-                            id="expense-name"
-                            placeholder="e.g., Groceries"
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                    {/* Expense Name */}
+                    <div className="space-y-2">
+                        <Label htmlFor="name">Expense Name</Label>
+                        <Controller
+                            name="label"
+                            control={control}
+                            render={({ field }) => (
+                                <Input
+                                    id="label"
+                                    placeholder="e.g., Groceries"
+                                    className={
+                                        errors.name ? "border-red-500" : ""
+                                    }
+                                    {...field}
+                                />
+                            )}
                         />
+                        {errors.name && (
+                            <Alert variant="destructive" className="py-2">
+                                <AlertDescription>
+                                    {errors.name.message}
+                                </AlertDescription>
+                            </Alert>
+                        )}
                     </div>
-                    <div>
-                        <Label htmlFor="expense-amount">Amount</Label>
-                        <Input
-                            id="expense-amount"
-                            type="number"
-                            placeholder="e.g., 50"
-                        />
-                    </div>
-                    <div className="flex flex-col">
-                        <Label htmlFor="expense-amount">Amount</Label>
 
-                        <DataListInput
-                            data={[{ label: "food", value: "food" }]}
-                            onChange={(selectedItem) =>
-                                console.log(selectedItem)
-                            }
+                    {/* Amount */}
+                    <div className="space-y-2">
+                        <Label htmlFor="amount">Amount</Label>
+                        <Controller
+                            name="amount"
+                            control={control}
+                            render={({ field }) => (
+                                <Input
+                                    id="amount"
+                                    type="number"
+                                    placeholder="e.g., 50"
+                                    className={
+                                        errors.amount ? "border-red-500" : ""
+                                    }
+                                    {...field}
+                                />
+                            )}
                         />
+                        {errors.amount && (
+                            <Alert variant="destructive" className="py-2">
+                                <AlertDescription>
+                                    {errors.amount.message}
+                                </AlertDescription>
+                            </Alert>
+                        )}
                     </div>
-                    <Button variant="outline">Add</Button>
-                </div>
+
+                    {/* Category */}
+                    <div className="space-y-2">
+                        <Label htmlFor="category">Category</Label>
+                        <Controller
+                            name="category"
+                            control={control}
+                            render={({ field }) => (
+                                <DataListInput
+                                    data={[
+                                        {
+                                            label: "Food",
+                                            value: "FOOD",
+                                        },
+                                        {
+                                            label: "Transport",
+                                            value: "TRANSPORT",
+                                        },
+                                    ]}
+                                    value={field.value}
+                                    onChange={(newValue) => {
+                                        field.onChange(newValue.value);
+                                    }}
+                                />
+                            )}
+                        />
+                        {errors.category && (
+                            <Alert variant="destructive" className="py-2">
+                                <AlertDescription>
+                                    {errors.category.message}
+                                </AlertDescription>
+                            </Alert>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="date">Date</Label>
+                        <Controller
+                            name="createdAt"
+                            control={control}
+                            render={({ field }) => (
+                                <DatePicker
+                                    date={
+                                        field.value
+                                            ? new Date(field.value)
+                                            : undefined
+                                    }
+                                    setDate={(date) => {
+                                        if (date) {
+                                            field.onChange(date.toISOString());
+                                        }
+                                    }}
+                                />
+                            )}
+                        />
+                        {errors.createdAt && (
+                            <Alert variant="destructive" className="py-2">
+                                <AlertDescription>
+                                    {errors.createdAt.message}
+                                </AlertDescription>
+                            </Alert>
+                        )}
+                    </div>
+
+                    <Button type="submit" className="w-full">
+                        Add Expense
+                    </Button>
+                </form>
             </DialogContent>
         </Dialog>
     );

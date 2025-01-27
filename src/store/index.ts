@@ -12,6 +12,7 @@ export type Expense = {
 interface ExpenseStoreState {
     expenses: Expense[];
     addExpense: (expense: Expense) => void;
+    removeExpense: (id: number) => void;
 }
 
 export const useExpenseStorage = create(
@@ -20,6 +21,13 @@ export const useExpenseStorage = create(
             expenses: [],
             addExpense: (expense: Expense) =>
                 set({ expenses: [expense, ...get().expenses] }),
+            removeExpense: (id: number) => {
+                const expenses = get().expenses.filter(
+                    (expense) => expense.id !== id
+                );
+
+                set({ expenses });
+            },
         }),
         {
             name: "expense-storage", // name of the item in the storage (must be unique)
