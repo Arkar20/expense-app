@@ -8,6 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { DataListInput } from "../atoms";
 
 export function AddExpenseDialogForm() {
     return (
@@ -36,6 +37,11 @@ export function AddExpenseDialogForm() {
                             type="number"
                             placeholder="e.g., 50"
                         />
+                    </div>
+                    <div className="flex flex-col">
+                        <Label htmlFor="expense-amount">Amount</Label>
+
+                        <DataListInput />
                     </div>
                     <Button variant="outline">Add</Button>
                 </div>

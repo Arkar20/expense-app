@@ -7,33 +7,42 @@ import { useExpenseStorage } from "./store";
 const App = () => {
     const { expenses } = useExpenseStorage();
 
-    console.log(expenses);
     return (
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-            <div className=" p-4  bg-primary-foreground min-h-screen text-white">
+            <div className="p-4  bg-primary-foreground min-h-screen text-white max-w-screen-xl mx-auto">
                 <div className="flex justify-end ">
                     <AddExpenseDialogForm />
                 </div>
-
-                <BarChart />
-                <Card className="mb-4">
-                    <CardHeader>
-                        <CardTitle>Expenses</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <ul>
-                            {expenses.map((expense) => (
-                                <li
-                                    key={expense.id}
-                                    className="flex justify-between border-b py-2"
-                                >
-                                    <span>{expense.label}</span>
-                                    <span>${expense.amount.toFixed(2)}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </CardContent>
-                </Card>
+                <div className="flex flex-col md:flex-row md:space-x-6">
+                    <div className="md:w-[40%]">
+                        <BarChart />
+                    </div>
+                    <Card className="mb-4 flex-1">
+                        <CardHeader>
+                            <CardTitle>Expenses</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <ul>
+                                {expenses.map((expense) => (
+                                    <li
+                                        key={expense.id}
+                                        className="flex justify-between border-b py-2"
+                                    >
+                                        <span>{expense.label}</span>
+                                        <span>
+                                            ${expense.amount.toFixed(2)}
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                            {!expenses.length && (
+                                <div className="w-full flex items-center justify-center h-full">
+                                    No Expense Found.
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
         </ThemeProvider>
     );
