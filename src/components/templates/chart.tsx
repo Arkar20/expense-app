@@ -21,14 +21,7 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart";
-const chartData = [
-    { month: "January", desktop: 186 },
-    { month: "February", desktop: 305 },
-    { month: "March", desktop: 237 },
-    { month: "April", desktop: 73 },
-    { month: "May", desktop: 209 },
-    { month: "June", desktop: 214 },
-];
+import { useExpenseStorage } from "@/store";
 
 const chartConfig = {
     desktop: {
@@ -38,6 +31,27 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function BarChart() {
+    const { expenses } = useExpenseStorage();
+
+    console.log(expenses);
+
+    const chartData = expenses.reduce((acc, expense) => {
+        const existingCategory = acc.find(
+            (item) => item.category === expense.category
+        );
+
+        if (existingCategory) {
+            existingCategory.total_amount += expense.amount;
+        } else {
+            acc.push({
+                category: expense.category,
+                total_amount: expense.amount,
+            });
+        }
+
+        return acc;
+    }, [] as { category: string; total_amount: number }[]);
+
     return (
         <Card>
             <CardHeader>
@@ -55,18 +69,17 @@ export function BarChart() {
                     >
                         <CartesianGrid vertical={false} />
                         <XAxis
-                            dataKey="month"
+                            dataKey="category"
                             tickLine={false}
                             tickMargin={10}
                             axisLine={false}
-                            tickFormatter={(value) => value.slice(0, 3)}
                         />
                         <ChartTooltip
                             cursor={false}
                             content={<ChartTooltipContent hideLabel />}
                         />
                         <Bar
-                            dataKey="desktop"
+                            dataKey="total_amount"
                             fill="var(--color-desktop)"
                             radius={8}
                         >

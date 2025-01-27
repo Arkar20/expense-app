@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 export type Expense = {
-    id: number;
+    id: string;
     label: string;
     category: string;
     amount: number;
@@ -12,7 +12,7 @@ export type Expense = {
 interface ExpenseStoreState {
     expenses: Expense[];
     addExpense: (expense: Expense) => void;
-    removeExpense: (id: number) => void;
+    removeExpense: (id: string) => void;
 }
 
 export const useExpenseStorage = create(
@@ -21,7 +21,7 @@ export const useExpenseStorage = create(
             expenses: [],
             addExpense: (expense: Expense) =>
                 set({ expenses: [expense, ...get().expenses] }),
-            removeExpense: (id: number) => {
+            removeExpense: (id: string) => {
                 const expenses = get().expenses.filter(
                     (expense) => expense.id !== id
                 );

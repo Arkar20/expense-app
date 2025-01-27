@@ -50,14 +50,14 @@ export function AddExpenseDialogForm() {
 
     const [isOpen, setIsOpen] = React.useState(false);
 
-    const { expenses, addExpense } = useExpenseStorage();
+    const { addExpense } = useExpenseStorage();
 
     const onSubmit = (data: FormData) => {
         addExpense({
             ...data,
             amount: Number(data.amount),
             createdAt: new Date(data.createdAt),
-            id: expenses.length + 1,
+            id: new Date().getTime().toString(),
         });
         reset();
         setIsOpen(false);
@@ -86,16 +86,16 @@ export function AddExpenseDialogForm() {
                                     id="label"
                                     placeholder="e.g., Groceries"
                                     className={
-                                        errors.name ? "border-red-500" : ""
+                                        errors.label ? "border-red-500" : ""
                                     }
                                     {...field}
                                 />
                             )}
                         />
-                        {errors.name && (
+                        {errors.label && (
                             <Alert variant="destructive" className="py-2">
                                 <AlertDescription>
-                                    {errors.name.message}
+                                    {errors.label.message}
                                 </AlertDescription>
                             </Alert>
                         )}
