@@ -1,50 +1,75 @@
-# React + TypeScript + Vite
+# Frontend - Expense
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
+This is the frontend part of the Expense App built with React (Vite), **TypeScript**, and styled using **Tailwind CSS**.
 
-Currently, two official plugins are available:
+## Thinking Process
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 1. **Application Flow**
+The first step was to define the user experience and the overall flow of the application. The core functionality revolves around:
+- Adding expenses.
+- Removing the Expenses (i.e bonus)
+- Visualizing the data in the form of a bar chart.
 
-## Expanding the ESLint configuration
+With these goals in mind, the app needed a clear and intuitive interface where users can easily add, view, and analyze their expenses.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### 2. **Choosing the Tech Stack**
+After defining the app’s functionality, I selected the technologies based on their ability to meet the requirements efficiently.
 
-- Configure the top-level `parserOptions` property like this:
+#### Frontend:
+- **React**: React is ideal for building dynamic, interactive user interfaces. Since this app involves state management and real-time data updates (like adding and viewing expenses), React's component-based architecture and hooks fit well with the app's needs.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+#### UI Framework:
+- **ShadCn UI**: For rapid UI development and a polished user experience, I decided to use ShadCn UI. It provides a collection of customizable and easy-to-implement components, helping with faster development without compromising on design quality.
+
+#### State Management:
+- **Zustand**: For state management, I opted for Zustand because it offers a lightweight and simple solution for managing global state. It also provide the functionality to persist the state in the localStorage which meet the requirements.
+
+#### Charting:
+- **Rechats**: To visualize spending by category, I chose **Recharts** due to its ease of integration with React and its robust features for rendering charts. Beside the shadCn has Chart component section so i can easily pick from it.
+
+
+## Run Locally
+
+Clone the project
+
+```bash
+  git clone https://github.com/Arkar20/expense-app
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Go to the project directory
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+  cd expense-app
 ```
+
+Install dependencies
+
+```bash
+  pnpm install
+```
+
+Start the server
+
+```bash
+  pnpm dev
+```
+
+
+## Technology Used
+
+React (Vite), Tailwind Css, Shadcn UI, Zustand
+
+
+
+
+## Roadmap
+
+- Adding Unit Testing and E2E testing for long run
+
+- Setup Microfrontend for scalability
+
+
+## Live Website
+
+https://lucky-faloodeh-507b35.netlify.app/
