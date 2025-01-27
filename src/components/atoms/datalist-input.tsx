@@ -17,7 +17,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 
-const frameworks = [
+const data = [
     {
         value: "next.js",
         label: "Next.js",
@@ -40,9 +40,18 @@ const frameworks = [
     },
 ];
 
-export function DataListInput() {
+type DataProps = {
+    label: string;
+    value: string;
+};
+
+type DataListInputProps = {
+    data: DataProps[];
+    onChange: (data: DataProps) => void;
+    value?: string;
+};
+export function DataListInput({ data, value, onChange }: DataListInputProps) {
     const [open, setOpen] = React.useState(false);
-    const [value, setValue] = React.useState("");
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -54,41 +63,35 @@ export function DataListInput() {
                     className="w-full justify-between"
                 >
                     {value
-                        ? frameworks.find(
-                              (framework) => framework.value === value
-                          )?.label
-                        : "Select framework..."}
+                        ? data.find((data) => data.value === value)?.label
+                        : "Select..."}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-full p-0">
                 <Command>
-                    <CommandInput placeholder="Search framework..." />
+                    <CommandInput placeholder="Search ..." />
                     <CommandList>
-                        <CommandEmpty>No framework found.</CommandEmpty>
+                        <CommandEmpty>No data found.</CommandEmpty>
                         <CommandGroup>
-                            {frameworks.map((framework) => (
+                            {data.map((data) => (
                                 <CommandItem
-                                    key={framework.value}
-                                    value={framework.value}
-                                    onSelect={(currentValue) => {
-                                        setValue(
-                                            currentValue === value
-                                                ? ""
-                                                : currentValue
-                                        );
+                                    key={data.value}
+                                    value={data.value}
+                                    onSelect={() => {
+                                        onChange(data);
                                         setOpen(false);
                                     }}
                                 >
                                     <Check
                                         className={cn(
                                             "mr-2 h-4 w-4",
-                                            value === framework.value
+                                            value === data.value
                                                 ? "opacity-100"
                                                 : "opacity-0"
                                         )}
                                     />
-                                    {framework.label}
+                                    {data.label}
                                 </CommandItem>
                             ))}
                         </CommandGroup>

@@ -41,7 +41,12 @@ export function AddExpenseDialogForm() {
                     <div className="flex flex-col">
                         <Label htmlFor="expense-amount">Amount</Label>
 
-                        <DataListInput />
+                        <DataListInput
+                            data={[{ label: "food", value: "food" }]}
+                            onChange={(selectedItem) =>
+                                console.log(selectedItem)
+                            }
+                        />
                     </div>
                     <Button variant="outline">Add</Button>
                 </div>
