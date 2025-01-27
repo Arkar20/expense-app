@@ -1,4 +1,3 @@
-import { Input } from "@/components/ui/input";
 import { useExpenseStorage } from "@/store";
 function App() {
     const store = useExpenseStorage();
